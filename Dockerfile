@@ -49,6 +49,7 @@ RUN apt-get update -y && apt-get install -y \
     bash-completion \
     nasm \
     postgresql-client-10 \
+    postgis \
 	git \
     && apt-get -y autoremove \
 	&& 	apt-get clean 
