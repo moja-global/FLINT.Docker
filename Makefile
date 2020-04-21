@@ -1,6 +1,6 @@
 DOCKER_REPO=mojaglobal
 APP_NAME=baseimage
-NUM_CPU=8
+BRANCH=develop
 
 
 # HELP
@@ -14,16 +14,16 @@ help: ## This help.
 
 # DOCKER TASKS
 # Build the container
-build: ## Build the container
-	docker build --build-arg NUM_CPU=$(NUM_CPU) -t moja-global/$(APP_NAME):bionic .
+build: ## Build the containers
+	docker build --build-arg NUM_CPU=8 -t moja/baseimage:bionic .
 
 build-nc: ## Build the container without caching
-	docker build --no-cache --build-arg NUM_CPU=$(NUM_CPU) -t moja-global/$(APP_NAME):bionic .
+	docker build --no-cache --build-arg NUM_CPU=8 -t moja/baseimage:bionic .
 	
 release: build-nc publish ## Make a release by building and publishing the `bionic` and `latest` tagged containers to docker hub
 
 # Docker publish
-publish: publish-latest publish-version ## Publish the `bionic` and `latest` tagged containers to docker hub
+publish: publish-latest publish-version ## Publish the `bionic`and `latest` tagged containers to docker hub
 
 publish-latest: tag-latest ## Publish the `latest` taged container to docker hub
 	@echo 'publish latest to $(DOCKER_REPO)'
@@ -34,13 +34,12 @@ publish-version: tag-version ## Publish the `bionic` taged containers to docker 
 	docker push $(DOCKER_REPO)/$(APP_NAME):bionic
 
 # Docker tagging
-tag: tag-latest tag-version ## Generate container tags for the `bionic`, and `latest` tags
+tag: tag-latest tag-version ## Generate container tags for the `bionic` and `latest`
 
 tag-latest: ## Generate container `latest` tag
 	@echo 'create tag latest'
-	docker tag moja-global/$(APP_NAME):bionic $(DOCKER_REPO)/$(APP_NAME):latest
+	docker tag moja/baseimage:bionic $(DOCKER_REPO)/$(APP_NAME):latest
 
-tag-version: ## Generate container `bionic` tags
-	@echo 'create tags'
-	docker tag moja-global/$(APP_NAME):bionic $(DOCKER_REPO)/$(APP_NAME):bionic
-	
+tag-version: ## Generate container `bionic` tag
+	@echo 'create tag bionic'
+	docker tag moja/baseimage:bionic $(DOCKER_REPO)/$(APP_NAME):bionic
