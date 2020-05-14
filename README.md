@@ -1,2 +1,67 @@
 # FLINT.docker
-Ubuntu 18.04 base image to build moja global libraries and executables
+
+This repository contains all the dockers required to build a FLINT library on various platforms (currently only Bionic).
+
+Each platform requires the base image, and then the platform build on that base
+
+Image names take the form:
+
+```
+mojaglobal/[image]:[platform]
+```
+
+So...
+
+```
+mojaglobal/flint-baseimage:bionic
+mojaglobal/flint:bionic
+```
+
+
+## Bionic flint-baseimage
+
+A Bionic based base image to build moja global libraries and executables
+
+## Bionic flint
+
+A Bionic image of the built moja global libraries and executables
+
+## cmake
+
+A make has been provided in each folder to help with the docker builds.
+
+It takes the following coommands:
+
+```
+cmake help
+help                           This help.
+build                          Build the containers
+build-nc                       Build the container without caching
+release                        Make a release by building and publishing the `$(TAGNAME)` and `latest` tagged containers to docker hub
+publish                        Publish the `$(TAGNAME)`and `latest` tagged containers to docker hub
+publish-latest                 Publish the `latest` taged container to docker hub
+publish-version                Publish the `$(TAGNAME)` taged containers to docker hub
+tag                            Generate container tags for the `$(TAGNAME)` and `latest`
+tag-latest                     Generate container `latest` tag
+tag-version                    Generate container `$(TAGNAME)` tag
+```
+
+with defaults:
+
+### filnt-baseimage
+```
+DOCKER_REPO=mojaglobal
+APP_NAME=flint-baseimage
+BRANCH=develop
+TAGNAME=bionic
+CPUNUM=8
+```
+
+### filnt
+```
+DOCKER_REPO=mojaglobal
+APP_NAME=flint
+BRANCH=develop
+TAGNAME=bionic
+CPUNUM=8
+```

@@ -28,7 +28,7 @@ WORKDIR $ROOTDIR/
 # Install basic dependencies
 RUN apt-get update -y && apt-get install -y --fix-missing --no-install-recommends \
     software-properties-common build-essential ca-certificates \
-    libtool automake zlib1g-dev libspatialite-dev pkg-config sqlite3 \
+    libtool automake zlib1g-dev libspatialite-dev pkg-config libsqlite3-dev sqlite3 \
 	python3-dev python3-numpy python3-pip openssl libssl-dev libpq-dev \
     libcurl4-gnutls-dev libproj-dev libxml2-dev libexpat-dev libxerces-c-dev \
     libgeos-dev libpoppler-dev \
@@ -55,18 +55,18 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cm
 	&& make clean \
     && cd ..
 
-RUN wget https://github.com/azadkuh/sqlite-amalgamation/archive/${SQLITE_VERSION}.tar.gz \
-    && tar -xzf ${SQLITE_VERSION}.tar.gz && mkdir -p sqlite-amalgamation-${SQLITE_VERSION}/build && cd sqlite-amalgamation-${SQLITE_VERSION}/build  \
-    && cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE \
-			-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON \
-            -DBUILD_SHARED_LIBS=ON \
-			-DCMAKE_INSTALL_PREFIX=$ROOTDIR .. \
-    && make --quiet -j $NUM_CPU install/strip \
-    && make clean \
-    && cd $ROOTDIR/src
+# RUN wget https://github.com/azadkuh/sqlite-amalgamation/archive/${SQLITE_VERSION}.tar.gz \
+#     && tar -xzf ${SQLITE_VERSION}.tar.gz && mkdir -p sqlite-amalgamation-${SQLITE_VERSION}/build && cd sqlite-amalgamation-${SQLITE_VERSION}/build  \
+#     && cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE \
+# 			-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON \
+#             -DBUILD_SHARED_LIBS=ON \
+# 			-DCMAKE_INSTALL_PREFIX=$ROOTDIR .. \
+#     && make --quiet -j $NUM_CPU install/strip \
+#     && make clean \
+#     && cd $ROOTDIR/src
 
-# fix sqlite include location    
-RUN mv $ROOTDIR/include/sqlite3/sqlite3.h  $ROOTDIR/include   
+# # fix sqlite include location    
+# RUN mv $ROOTDIR/include/sqlite3/sqlite3.h  $ROOTDIR/include   
 
 RUN wget https://pocoproject.org/releases/poco-${POCO_VERSION}/poco-${POCO_VERSION}-all.tar.gz \
     && tar -xzf poco-${POCO_VERSION}-all.tar.gz && mkdir poco-${POCO_VERSION}-all/cmake-build && cd poco-${POCO_VERSION}-all/cmake-build \
