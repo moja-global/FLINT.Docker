@@ -6,14 +6,15 @@ Each platform requires the base image, and then the platform build on that base
 
 Image names take the form:
 
-```
+```docker
 mojaglobal/[image]:[platform]
 ```
 
 So...
 
-```
+```docker
 mojaglobal/flint-baseimage:bionic
+mojaglobal/vscode-baseimage:bionic
 mojaglobal/flint:bionic
 ```
 
@@ -25,6 +26,10 @@ A Bionic based base image to build moja global libraries and executables
 ## Bionic flint
 
 A Bionic image of the built moja global libraries and executables
+
+## Bionic vscode-baseimage
+
+A Bionic based base image to use in Visual Studio Code remote containers
 
 ## cmake
 
@@ -49,7 +54,8 @@ tag-version                    Generate container `$(TAGNAME)` tag
 with defaults:
 
 ### filnt-baseimage
-```
+
+```bash
 DOCKER_REPO=mojaglobal
 APP_NAME=flint-baseimage
 BRANCH=develop
@@ -58,9 +64,20 @@ CPUNUM=8
 ```
 
 ### filnt
-```
+
+```bash
 DOCKER_REPO=mojaglobal
 APP_NAME=flint
+BRANCH=develop
+TAGNAME=bionic
+CPUNUM=8
+```
+
+### vscode-baseimage
+
+```bash
+DOCKER_REPO=mojaglobal
+APP_NAME=vscode-baseimage
 BRANCH=develop
 TAGNAME=bionic
 CPUNUM=8
