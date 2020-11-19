@@ -31,11 +31,14 @@ RUN apt-get update -y && apt-get install -y --fix-missing --no-install-recommend
     libtool automake zlib1g-dev libspatialite-dev pkg-config libsqlite3-dev sqlite3 \
 	python3-dev python3-numpy python3-pip openssl libssl-dev libpq-dev \
     libcurl4-gnutls-dev libproj-dev libxml2-dev libexpat-dev libxerces-c-dev \
-    libgeos-dev libpoppler-dev \
+    libgeos-dev libpoppler-dev libzstd1-dev gcc-8 g++-8 \
     git wget bash-completion nasm \
     postgresql-client-10 postgresql-server-dev-10 \
     && apt-get -y autoremove \
 	&& 	apt-get clean 
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 700 --slave /usr/bin/g++ g++ /usr/bin/g++-7    
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
 
 # set environment variables
 ENV PATH $ROOTDIR/bin:$PATH

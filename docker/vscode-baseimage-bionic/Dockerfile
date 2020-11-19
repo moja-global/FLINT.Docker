@@ -62,6 +62,8 @@ RUN apt-get update \
         python3-numpy                           \
         python3-pip                             \
         software-properties-common              \
+        gcc-8                                   \
+        g++-8                                   \
         sqlite3                                 \
         valgrind                                \
         wget                                    \
@@ -77,6 +79,9 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 700 --slave /usr/bin/g++ g++ /usr/bin/g++-7    
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
 
 ENV ROOTDIR /usr/local
 ENV GDAL_VERSION 2.4.1
