@@ -62,6 +62,7 @@ RUN apt-get update \
         python3-numpy                           \
         python3-pip                             \
         software-properties-common              \
+        libzstd1-dev                            \
         gcc-8                                   \
         g++-8                                   \
         sqlite3                                 \
