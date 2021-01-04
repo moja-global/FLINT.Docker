@@ -35,7 +35,7 @@ A Bionic based base image to use in Visual Studio Code remote containers
 
 A make has been provided in each folder to help with the docker builds.
 
-It takes the following coommands:
+It takes the following commands:
 
 ```
 cmake help
@@ -44,8 +44,8 @@ build                          Build the containers
 build-nc                       Build the container without caching
 release                        Make a release by building and publishing the `$(TAGNAME)` and `latest` tagged containers to docker hub
 publish                        Publish the `$(TAGNAME)`and `latest` tagged containers to docker hub
-publish-latest                 Publish the `latest` taged container to docker hub
-publish-version                Publish the `$(TAGNAME)` taged containers to docker hub
+publish-latest                 Publish the `latest` tagged container to docker hub
+publish-version                Publish the `$(TAGNAME)` tagged containers to docker hub
 tag                            Generate container tags for the `$(TAGNAME)` and `latest`
 tag-latest                     Generate container `latest` tag
 tag-version                    Generate container `$(TAGNAME)` tag
@@ -53,7 +53,7 @@ tag-version                    Generate container `$(TAGNAME)` tag
 
 with defaults:
 
-### filnt-baseimage
+### flint-baseimage
 
 ```bash
 DOCKER_REPO=mojaglobal
@@ -63,7 +63,7 @@ TAGNAME=bionic
 CPUNUM=8
 ```
 
-### filnt
+### flint
 
 ```bash
 DOCKER_REPO=mojaglobal
