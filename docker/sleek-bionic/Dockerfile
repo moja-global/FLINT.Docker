@@ -1,30 +1,31 @@
 # ========================================================================================================================
 #
-# Docker Image - based on Ubuntu 18.04 - for building moja flint libraries and executables
+# Docker Image based on Ubuntu 18.04 for building moja sleek libraries and executables
 #
 # Building this Docker: 
 #   docker build --build-arg BUILD_TYPE=RELEASE \
-#				 --build-arg NUM_CPU=4 \
-#				 --build-arg FLINT_BRANCH=develop \
-#				 -t mojaglobal/flint:bionic .
+#                --build-arg NUM_CPU=4 \
+#				 --build-arg GITHUB_AT=[TOKEN] \
+#				 --build-arg SLEEK_BRANCH=release/sleek/1_0_6 \
+#				 -t mojaglobal/sleek:bionic .
 #
 # ========================================================================================================================
 
 
 # ------------------------------------------------------------------------------------------------------------------------
-# Specify the Parent Image from which our image should be built: In this case mojaglobal/flint-baseimage:bionic.
+# Specify the Parent Image from which our image should be built: In this case mojaglobal/flint:bionic.
 # ------------------------------------------------------------------------------------------------------------------------
 
-FROM mojaglobal/flint-baseimage:bionic
+FROM mojaglobal/flint:bionic
 
 
 # ------------------------------------------------------------------------------------------------------------------------
 # Add a little metadata to describe the image:
 # ------------------------------------------------------------------------------------------------------------------------
 
-LABEL project="=FLINT Docker Builds"\
-  	  image="FLINT Image"\
-  	  version="1.0"\
+LABEL project="=FLINT Docker Builds" \
+  	  image="SLEEK Image" \
+  	  version="1.0" \
   	  maintainer="Moja Global <info@moja.global>"
 
 
@@ -37,11 +38,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 # ------------------------------------------------------------------------------------------------------------------------
-# Add a build time variable that will allow us to specify the flint repository branch to use during the build.
+# Add a build time variable that will allow us to specify the sleek repository branch to use during the build.
 # Do not set a default value for it forcing us to provide it at build time
 # ------------------------------------------------------------------------------------------------------------------------
 
-ARG FLINT_BRANCH
+ARG SLEEK_BRANCH
 
 
 # ------------------------------------------------------------------------------------------------------------------------
@@ -53,28 +54,11 @@ ARG BUILD_TYPE=DEBUG
 
 
 # ------------------------------------------------------------------------------------------------------------------------
-# Set the preferred working directory for the next set of RUN instructions: In this case the docker root path.
+# Add a build time variable that will allow us to specify the Github Access Token to use during the build.
+# Do not set a default value for it forcing us to provide it at build time
 # ------------------------------------------------------------------------------------------------------------------------
 
-WORKDIR $ROOTDIR/
-
-
-# ------------------------------------------------------------------------------------------------------------------------
-# Install additional third party libraries, specific to this image build, from the default Ubuntu Package Archive:
-#									
-# - doxygen								=	Documentation generation tool
-# - doxygen-latex						=	Doxygen dependency package
-# - graphviz							=	Open source graph visualization software
-# - postgis								=	Geographic objects support for PostgreSQL
-# ------------------------------------------------------------------------------------------------------------------------
-
-RUN apt-get update -y \
-	&& apt-get install -y \
-		doxygen \
-		doxygen-latex \
-		graphviz \
-		postgis \
-	&& 	apt-get clean
+ARG GITHUB_AT
 
 
 # ------------------------------------------------------------------------------------------------------------------------
@@ -93,15 +77,26 @@ WORKDIR $ROOTDIR/src
 
 
 # ------------------------------------------------------------------------------------------------------------------------
-# Download and install an additional third party library called zipper, that's specific to this image build, from sources:
-# Zipper is a C++ wrapper around minizip compression library.
+# Add environmental variables that collectively declare the versions of additional 3rd party libs that we intend to use.
+#
+# - rabbitmq-c							=	C-language AMQP client library for use with v2.0+ of the RabbitMQ broker
+# - SimpleAmqpClient					=	C++ wrapper around the rabbitmq-c C library
 # ------------------------------------------------------------------------------------------------------------------------
 
-RUN	git clone --recursive https://github.com/sebastiandev/zipper.git \
-	&& cd zipper && git checkout e9f150516cb55d194b5e01d21a9527783e98311d \
-	&& mkdir build  \
-	&& cd build \
-	&& cmake .. \
+ENV RABBITMQ_C_VERSION 0.9.0
+ENV SIMPLE_AMQP_CLIENT_VERSION 2.4.0
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+# Download and install rabbitmq-c from sources:
+# ------------------------------------------------------------------------------------------------------------------------
+
+RUN wget https://github.com/alanxz/rabbitmq-c/archive/v${RABBITMQ_C_VERSION}.tar.gz \
+	&& tar xzf v${RABBITMQ_C_VERSION}.tar.gz \
+    && mkdir -p rabbitmq-c-${RABBITMQ_C_VERSION}/build \
+	&& cd rabbitmq-c-${RABBITMQ_C_VERSION}/build \
+    && cmake -DCMAKE_BUILD_TYPE=Release \
+             -DCMAKE_INSTALL_PREFIX=$ROOTDIR .. \
 	&& make --quiet -j $NUM_CPU \
     && make --quiet install \
     && make clean \
@@ -109,70 +104,55 @@ RUN	git clone --recursive https://github.com/sebastiandev/zipper.git \
 
 
 # ------------------------------------------------------------------------------------------------------------------------
-# Download and install the FLINT library from sources:
-# ------------------------------------------------------------------------------------------------------------------------
-
-RUN git clone --recursive --depth 1 -b ${FLINT_BRANCH} https://github.com/moja-global/FLINT.git flint \
-    && mkdir -p flint/Source/build \
-    && cd flint/Source/build \
-    && cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE  \
-             -DCMAKE_INSTALL_PREFIX=$ROOTDIR \
-             -DENABLE_TESTS:BOOL=OFF \
-             -DENABLE_MOJA.MODULES.GDAL=ON \
-             -DENABLE_MOJA.MODULES.LIBPQ=ON \
-             -DBoost_USE_STATIC_LIBS=OFF \
-             -DBUILD_SHARED_LIBS=ON .. \
-	&& make --quiet -j $NUM_CPU \
-	&& make --quiet install \
-	&& make clean \
-    && cd $ROOTDIR/src   
-
-
-# ------------------------------------------------------------------------------------------------------------------------
-# Create a symbolic link between $ROOTDIR/bin and the moja modules installed at $ROOTDIR/lib/:
-# ------------------------------------------------------------------------------------------------------------------------
-
-RUN ln -s $ROOTDIR/lib/libmoja.modules.* $ROOTDIR/bin
-
-
-# ------------------------------------------------------------------------------------------------------------------------
-# Add environmental variables that declare the language settings that we intend to use.
-#
-# - LANG								=	The locale to use
-# - LC_ALL								=	An override for all LC_xxx environmental variables
-# ------------------------------------------------------------------------------------------------------------------------
-
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
-
-
-# ------------------------------------------------------------------------------------------------------------------------
-# Install setuptools from the Python Package Index to help download, build, install, upgrade & uninstall Python packages.
+# Download and install SimpleAmqpClient from sources:
 # ------------------------------------------------------------------------------------------------------------------------
 	
-RUN pip3 install setuptools
+RUN wget https://github.com/alanxz/SimpleAmqpClient/archive/v${SIMPLE_AMQP_CLIENT_VERSION}.tar.gz \
+    && tar xzf v${SIMPLE_AMQP_CLIENT_VERSION}.tar.gz  \
+    && mkdir -p SimpleAmqpClient-${SIMPLE_AMQP_CLIENT_VERSION}/build \
+	&& cd SimpleAmqpClient-${SIMPLE_AMQP_CLIENT_VERSION}/build \
+    && cmake -DCMAKE_BUILD_TYPE=RELEASE \
+             -DBoost_USE_STATIC_LIBS=OFF \
+             -DBUILD_SHARED_LIBS=ON \
+             -DCMAKE_INSTALL_PREFIX=$ROOTDIR .. \
+	&& make --quiet -j $NUM_CPU \
+    && make --quiet install \
+    && make clean \
+    && cd $ROOTDIR/src	
 
 
 # ------------------------------------------------------------------------------------------------------------------------
-# Download and install the FLINT Data preprocessing tools from sources:
+# Download and install SLEEK modules from sources:
 # ------------------------------------------------------------------------------------------------------------------------
 
-RUN git clone --recursive --depth 1 -b ${FLINT_BRANCH}  \
-	https://github.com/moja-global/FLINT.Data_Preprocessing.git FLINT.Data_Preprocessing \
-    && cd FLINT.Data_Preprocessing \
-    && pip3 install .
-
+RUN git clone --recursive --depth 1 -b ${SLEEK_BRANCH} https://${GITHUB_AT}@github.com/SLEEK-TOOLS/moja.sleek.git moja.sleek \
+    && mkdir -p moja.sleek/Source/build \
+    && cd moja.sleek/Source/build \
+    && cmake -DCMAKE_BUILD_TYPE==$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=$ROOTDIR .. \
+             -DENABLE_TESTS:BOOL=OFF \
+             -DBoost_USE_STATIC_LIBS=OFF \
+             -DBUILD_SHARED_LIBS=ON \
+             -DMOJA_INCLUDE_DIR=$ROOTDIR/include .. \
+ 	&& make --quiet -j $NUM_CPU \
+    && make --quiet install \
+    && make clean \
+    && cd $ROOTDIR/src
+	
 
 # ------------------------------------------------------------------------------------------------------------------------
-# Update library links and cache
-# ------------------------------------------------------------------------------------------------------------------------
-RUN ldconfig
-
-
-# ------------------------------------------------------------------------------------------------------------------------
-# Clear all downloaded source code files:  
+# Add a new user account:
 # ------------------------------------------------------------------------------------------------------------------------
 
-RUN rm -Rf $ROOTDIR/src/*
+RUN useradd -ms /bin/bash moja
 
+# ------------------------------------------------------------------------------------------------------------------------
+# Make the newly created user the default user:
+# ------------------------------------------------------------------------------------------------------------------------
 
+USER moja
+
+# ------------------------------------------------------------------------------------------------------------------------
+# Update the working directory for all the RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow:
+# ------------------------------------------------------------------------------------------------------------------------
+
+WORKDIR /home/moja
