@@ -62,10 +62,10 @@ WORKDIR $ROOTDIR/
 # ------------------------------------------------------------------------------------------------------------------------
 # Install additional third party libraries, specific to this image build, from the default Ubuntu Package Archive:
 #									
-# - doxygen								=	Documentation generation tool
+# - doxygen							=	Documentation generation tool
 # - doxygen-latex						=	Doxygen dependency package
 # - graphviz							=	Open source graph visualization software
-# - postgis								=	Geographic objects support for PostgreSQL
+# - postgis							=	Geographic objects support for PostgreSQL
 # ------------------------------------------------------------------------------------------------------------------------
 
 RUN apt-get update -y \
