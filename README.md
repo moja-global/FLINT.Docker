@@ -1,8 +1,10 @@
 # FLINT.docker
 
-This repository contains all the dockers required to build a FLINT library on various platforms (currently only Bionic).
+This repository contains the Dockerfiles required to build FLINT libraries and implementations on various platforms (though only supporting Bionic at the moment).
 
-Each platform requires the base image, and then the platform build on that base
+## FLINT Libraries
+
+To build FLINT Libraries for a platform, one needs to build a base image for that platform, and then build the FLINT on top of it.
 
 Image names take the form:
 
@@ -18,18 +20,40 @@ mojaglobal/vscode-baseimage:bionic
 mojaglobal/flint:bionic
 ```
 
-
-## Bionic flint-baseimage
+### Bionic flint-baseimage
 
 A Bionic based base image to build moja global libraries and executables
 
-## Bionic flint
+### Bionic flint
 
 A Bionic image of the built moja global libraries and executables
 
-## Bionic vscode-baseimage
+### Bionic vscode-baseimage
 
 A Bionic based base image to use in Visual Studio Code remote containers
+
+
+
+## FLINT Implementations
+
+To build a FLINT Implementation for a platform, one needs to build a FLINT Library for that platform, and then build FLINT Implementation Modules on top of it.
+
+Image names take the form:
+
+```docker
+mojaglobal/[implementation name]:[platform]
+```
+
+So...
+
+```docker
+mojaglobal/sleek:bionic
+```
+
+### SLEEK
+
+A System for Land Based Emissions Estimations in Kenya
+
 
 ## cmake
 
@@ -80,6 +104,14 @@ DOCKER_REPO=mojaglobal
 APP_NAME=vscode-baseimage
 BRANCH=develop
 TAGNAME=bionic
+CPUNUM=8
+```
+
+### sleek implementation image
+
+```bash
+DOCKER_REPO=mojaglobal
+APP_NAME=moja.sleek
 CPUNUM=8
 ```
 
