@@ -1,8 +1,8 @@
 # FLINT.docker
 
-This repository contains the Dockerfiles required to build FLINT Libraries and Official FLINT Implementations on various platforms (though only supporting Bionic at the moment).
+This repository contains the Dockerfiles required to build FLINT libraries and implementations on various platforms (though only supporting Bionic at the moment).
 
-## FLINT LIBRARIES
+## FLINT Libraries
 
 To build FLINT Libraries for a platform, one needs to build a base image for that platform, and then build the FLINT on top of it.
 
@@ -34,9 +34,9 @@ A Bionic based base image to use in Visual Studio Code remote containers
 
 
 
-## FLINT IMPLEMENTATIONS
+## FLINT Implementations
 
-To build a FLINT Implementation for a platform, one needs to build a FLINT Library for that platform, and then build the FLINT Implementation Modules on top of it.
+To build a FLINT Implementation for a platform, one needs to build a FLINT Library for that platform, and then build FLINT Implementation Modules on top of it.
 
 Image names take the form:
 
@@ -149,3 +149,4 @@ The following people are Maintainers Reviewers Ambassadors or Coaches
 **Reviewers** check proposed changes before they go to the Maintainers  
 **Ambassadors** are available to provide training related to this repository  
 **Coaches** are available to provide information to new contributors to this repository  
+
